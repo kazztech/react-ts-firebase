@@ -10,13 +10,22 @@ type User = {
 function App() {
   const [users, setUsers] = useState<User[]>([]);
 
-  useEffect(() => {
+  const fetchUsersData = () => {
     const usersRef = db.collection("users");
     usersRef.get().then((snapshot) => {
+      const newUsers: any[] = [];
       snapshot.forEach((doc) => {
-        console.log(doc.id, doc.data());
+        newUsers.push({
+          id: doc.id,
+          ...doc.data(),
+        });
       });
+      setUsers(newUsers);
     });
+  };
+
+  useEffect(() => {
+    fetchUsersData();
   }, []);
 
   return (
