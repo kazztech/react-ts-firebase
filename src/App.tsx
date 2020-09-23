@@ -9,6 +9,8 @@ type User = {
 
 function App() {
   const [users, setUsers] = useState<User[]>([]);
+  const [addUserName, setAddUserName] = useState<string>("");
+  const [addUserHeight, setAddUserHeight] = useState<number>(200);
 
   const fetchUsersData = () => {
     const usersRef = db.collection("users");
@@ -39,6 +41,25 @@ function App() {
     }
   };
 
+  const handleAdd = () => {
+    if (window.confirm("追加してもよろしいですか？")) {
+      db.collection("users")
+        .add({
+          name: addUserName,
+          height: addUserHeight,
+        })
+        .then(() => {
+          fetchUsersData();
+          setAddUserHeight(200);
+          setAddUserName("");
+          alert("追加しました");
+        })
+        .catch(() => {
+          alert("失敗しました");
+        });
+    }
+  };
+
   useEffect(() => {
     fetchUsersData();
   }, []);
@@ -46,6 +67,25 @@ function App() {
   return (
     <div>
       <h2>Users</h2>
+      <div>
+        <label>
+          NAME:{" "}
+          <input
+            type="text"
+            value={addUserName}
+            onChange={(event) => setAddUserName(event.target.value)}
+          />
+        </label>
+        <label>
+          HEIGHT:{" "}
+          <input
+            type="number"
+            value={addUserHeight}
+            onChange={(event) => setAddUserHeight(event.target.valueAsNumber)}
+          />
+        </label>
+        <button onClick={() => handleAdd()}>追加</button>
+      </div>
       <table>
         <tbody>
           {users.map((user) => (
