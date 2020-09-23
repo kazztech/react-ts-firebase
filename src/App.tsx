@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { db } from "./firebase";
 
 type User = {
   id: string;
@@ -7,11 +8,17 @@ type User = {
 };
 
 function App() {
-  const [users, setUsers] = useState<User[]>([
-    { id: "ID1", name: "ゾンビ", height: 195 },
-    { id: "ID2", name: "スケルトン", height: 199 },
-    { id: "ID3", name: "クリーパー", height: 170 },
-  ]);
+  const [users, setUsers] = useState<User[]>([]);
+
+  useEffect(() => {
+    const usersRef = db.collection("users");
+    usersRef.get().then((snapshot) => {
+      snapshot.forEach((doc) => {
+        console.log(doc.id, doc.data());
+      });
+    });
+  }, []);
+
   return (
     <div>
       <h2>Users</h2>
