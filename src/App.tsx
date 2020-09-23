@@ -24,6 +24,21 @@ function App() {
     });
   };
 
+  const handleDelete = (id: string) => {
+    if (window.confirm("削除してもよろしいですか？")) {
+      db.collection("users")
+        .doc(id)
+        .delete()
+        .then(() => {
+          fetchUsersData();
+          alert("削除しました");
+        })
+        .catch(() => {
+          alert("失敗しました");
+        });
+    }
+  };
+
   useEffect(() => {
     fetchUsersData();
   }, []);
@@ -31,11 +46,19 @@ function App() {
   return (
     <div>
       <h2>Users</h2>
-      {users.map((user) => (
-        <div key={user.id}>
-          {user.name} ({user.height}cm)
-        </div>
-      ))}
+      <table>
+        <tbody>
+          {users.map((user) => (
+            <tr key={user.id}>
+              <td>{user.name}</td>
+              <td>{user.height}cm</td>
+              <td>
+                <button onClick={() => handleDelete(user.id)}>削除</button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }
